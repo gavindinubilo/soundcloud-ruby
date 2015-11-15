@@ -100,7 +100,7 @@ module SoundCloud
         "#{param_name}=#{CGI.escape value}" unless value.nil?
       end.compact.join("&")
       store_options(options)
-      "https://#{host}#{AUTHORIZE_PATH}?response_type=code_and_token&client_id=#{client_id}&redirect_uri=#{URI.escape(redirect_uri)}&#{additional_params}"
+      "http://#{host}#{AUTHORIZE_PATH}?response_type=code_and_token&client_id=#{client_id}&redirect_uri=#{URI.escape(redirect_uri)}&#{additional_params}"
     end
 
     def exchange_token(options={})
@@ -127,7 +127,7 @@ module SoundCloud
       end
       params.merge!(client_params)
       response = handle_response(false) {
-        self.class.post("https://#{api_host}#{TOKEN_PATH}", :query => params)
+        self.class.post("http://#{api_host}#{TOKEN_PATH}", :query => params)
       }
       @options.merge!(:access_token => response.access_token, :refresh_token => response.refresh_token)
       @options[:expires_at] = Time.now + response.expires_in if response.expires_in
@@ -180,7 +180,7 @@ module SoundCloud
     def construct_query_arguments(path_or_uri, options={}, body_or_query=:query)
       uri = URI.parse(path_or_uri)
       path = uri.path
-      scheme = use_ssl? ? 'https' : 'http'
+      scheme = 'http'
       options = options.dup
       options[body_or_query] ||= {}
       options[body_or_query][:format] = "json"
